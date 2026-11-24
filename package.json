@@ -1,0 +1,24 @@
+{
+  "name": "text-to-speech-app-root",
+  "version": "1.0.0",
+  "description": "Full-stack Text-to-Speech Studio application",
+  "scripts": {
+    "install:all": "npm --prefix server install && npm --prefix client install",
+    "server": "npm --prefix server start",
+    "server:dev": "npm --prefix server run dev",
+    "client": "npm --prefix client run dev",
+    "client:build": "npm --prefix client run build",
+    "test:server": "npm --prefix server test",
+    "test:client": "npm --prefix client test",
+    "test": "npm --prefix server test && npm --prefix client test"
+  },
+  "keywords": [
+    "text-to-speech",
+    "react",
+    "vite",
+    "express",
+    "web-speech-api"
+  ],
+  "author": "",
+  "license": "MIT"
+}

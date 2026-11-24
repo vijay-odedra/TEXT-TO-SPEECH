@@ -1,0 +1,189 @@
+{
+  "info": {
+    "_postman_id": "c1f7b8a9-4e8e-4a15-b26a-932660e0a711",
+    "name": "Vocalix Text-to-Speech Studio API",
+    "description": "Comprehensive Postman collection for the Vocalix TTS REST API, featuring audio synthesis, voice enumeration, server health, and parameter validation tests.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:5005",
+      "type": "string"
+    }
+  ],
+  "item": [
+    {
+      "name": "System & Health",
+      "item": [
+        {
+          "name": "Health Check",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/health",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "health"]
+            },
+            "description": "Verifies that the Express backend server is online and returns uptime statistics."
+          },
+          "response": []
+        },
+        {
+          "name": "Provider Status",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/status",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "status"]
+            },
+            "description": "Reports the active speech synthesis provider, audio format, and credentials status."
+          },
+          "response": []
+        },
+        {
+          "name": "List Voices",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/voices",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "voices"]
+            },
+            "description": "Fetches pre-configured voices supported by the server engine."
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Audio Synthesis",
+      "item": [
+        {
+          "name": "Synthesize Speech (English MP3)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"text\": \"Welcome to Vocalix! Both male and female voices are ready to convert your words into lifelike audio.\",\n  \"language\": \"en-US\",\n  \"speed\": 1.0,\n  \"pitch\": 1.0,\n  \"volume\": 1.0\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/tts",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "tts"]
+            },
+            "description": "Synthesizes input text into binary audio (audio/mpeg) streamed directly in response."
+          },
+          "response": []
+        },
+        {
+          "name": "Synthesize Speech (Hindi MP3)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"text\": \"नमस्ते! वोकलिक्स टेक्स्ट-टू-स्पीच स्टूडियो में आपका स्वागत है।\",\n  \"language\": \"hi-IN\",\n  \"speed\": 1.0,\n  \"pitch\": 1.0,\n  \"volume\": 1.0\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/tts",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "tts"]
+            },
+            "description": "Synthesizes Hindi language text into binary audio."
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Validation & Error Scenarios",
+      "item": [
+        {
+          "name": "Validation - Missing Text (400)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"language\": \"en-US\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/tts",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "tts"]
+            },
+            "description": "Verifies that omitting 'text' returns a 400 Bad Request with field validation details."
+          },
+          "response": []
+        },
+        {
+          "name": "Validation - Invalid Speed Out of Range (400)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"text\": \"Test speed range validation.\",\n  \"speed\": 4.5\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/tts",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "tts"]
+            },
+            "description": "Verifies that speed outside 0.5 - 2.0 is cleanly rejected."
+          },
+          "response": []
+        },
+        {
+          "name": "Validation - Exceed Character Limit (400)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"text\": \"A string exceeding 5000 characters limit...\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/tts",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "tts"]
+            },
+            "description": "Tests text length bounds enforcement."
+          },
+          "response": []
+        }
+      ]
+    }
+  ]
+}
