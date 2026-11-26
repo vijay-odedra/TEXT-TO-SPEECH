@@ -2,7 +2,7 @@ const http = require('http');
 const fs = require('fs');
 const path = require('path');
 
-const PORT = 5173;
+let currentPort = parseInt(process.env.PORT || '5174', 10);
 const DIST_DIR = path.join(__dirname, 'dist');
 
 const MIME_TYPES = {
@@ -79,9 +79,17 @@ const server = http.createServer((req, res) => {
 });
 
 server.on('error', (err) => {
-  console.error('[Server Error]:', err.message);
+  if (err.code === 'EADDRINUSE') {
+    console.log(`Port ${currentPort} is already in use, trying port ${currentPort + 1}...`);
+    currentPort += 1;
+    setTimeout(() => {
+      server.listen(currentPort, '0.0.0.0');
+    }, 200);
+  } else {
+    console.error('[Server Error]:', err.message);
+  }
 });
 
-server.listen(PORT, '0.0.0.0', () => {
-  console.log(`Frontend studio running at http://localhost:${PORT}`);
+server.listen(currentPort, '0.0.0.0', () => {
+  console.log(`Frontend studio running at http://localhost:${currentPort}`);
 });
