@@ -20,7 +20,23 @@ const MIME_TYPES = {
   '.mp3': 'audio/mpeg'
 };
 
+process.on('uncaughtException', (err) => {
+  console.error('[Frontend Server] Uncaught Exception:', err.message);
+});
+
+process.on('unhandledRejection', (reason) => {
+  console.error('[Frontend Server] Unhandled Rejection:', reason);
+});
+
 const server = http.createServer((req, res) => {
+  req.on('error', (err) => {
+    console.error('[Request Error]:', err.message);
+  });
+  
+  res.on('error', (err) => {
+    console.error('[Response Error]:', err.message);
+  });
+
   // Normalize URL
   let safeUrl = req.url.split('?')[0];
   if (safeUrl === '/') safeUrl = '/index.html';
@@ -45,17 +61,25 @@ const server = http.createServer((req, res) => {
     
     fs.readFile(filePath, (readErr, content) => {
       if (readErr) {
-        res.statusCode = 500;
-        res.end('Server Error');
+        if (!res.headersSent) {
+          res.statusCode = 500;
+          res.end('Server Error');
+        }
         return;
       }
-      res.writeHead(200, {
-        'Content-Type': contentType,
-        'Access-Control-Allow-Origin': '*'
-      });
-      res.end(content);
+      if (!res.headersSent) {
+        res.writeHead(200, {
+          'Content-Type': contentType,
+          'Access-Control-Allow-Origin': '*'
+        });
+        res.end(content);
+      }
     });
   });
+});
+
+server.on('error', (err) => {
+  console.error('[Server Error]:', err.message);
 });
 
 server.listen(PORT, '0.0.0.0', () => {
